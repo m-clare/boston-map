@@ -27,6 +27,10 @@ div.style="height: 400px";
 const map = new maplibregl.Map({
 container: div,
 zoom: 10,
+maxZoom: 14.8,
+minZoom: 10,
+bounds: [[-71.191247,42.227911],[-70.648072,42.450118]
+],
 center: [-71.057083, 42.3503293],
 style: {
 version: 8,

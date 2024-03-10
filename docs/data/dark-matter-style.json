@@ -1032,6 +1032,34 @@
         "text-halo-color": "rgba(0,0,0,0.7)",
         "text-halo-width": 1.4
       }
+    },
+    {
+      "id": "road_major_label",
+      "type": "symbol",
+      "source": "bostontiles",
+      "source-layer": "transportation_name",
+      "filter": ["==", "$type", "LineString"],
+      "layout": {
+        "symbol-placement": "line",
+        "text-field": "{name}",
+        "text-font": ["KlokanTech Noto Sans Regular"],
+        "text-letter-spacing": 0.1,
+        "text-rotation-alignment": "map",
+        "text-size": {
+          "base": 1.4,
+          "stops": [
+            [10, 8],
+            [20, 14]
+          ]
+        },
+        "text-transform": "uppercase"
+      },
+      "paint": {
+        "text-color": "rgb(237,237,237)",
+        "text-halo-blur": 1,
+        "text-halo-color": "rgba(0,0,0,0.7)",
+        "text-halo-width": 1
+      }
     }
   ],
   "id": "dark-matter"
