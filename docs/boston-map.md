@@ -9,7 +9,7 @@ import { PMTiles, Protocol } from "npm:pmtiles@3.0.3";
 
 ```js
 const bostonMap = FileAttachment("data/boston.pmtiles")
-const mapStyle = FileAttachment("data/dark-matter-style.json").json()
+const mapStyle = FileAttachment("data/maptiler-3d-gl-style.json").json()
 const mapFile = new PMTiles(bostonMap._url)
 ```
 
@@ -35,7 +35,7 @@ center: [-71.057083, 42.3503293],
 style: {
 version: 8,
 sources: {
- bostontiles: {
+ openmaptiles: {
  type: "vector",
  tiles: ["pmtiles://" + mapFile.source.getKey() + "/{z}/{x}/{y}"],
  },
