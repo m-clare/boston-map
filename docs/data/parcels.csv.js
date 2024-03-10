@@ -44,4 +44,8 @@ const relevantParcels = new Set(
 const parcelShapes = parcelData.features.filter((feature) =>
   relevantParcels.has(feature.properties.MAP_PAR_ID)
 );
-console.log(parcelShapes.length);
+
+// get polylabel location of parcel shape
+const newShapes = parcelShapes.map((parcel) => ({
+  polylabel: polylabel(parcel.geometry.coordinates),
+}));
