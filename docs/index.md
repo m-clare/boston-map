@@ -4,112 +4,210 @@ toc: false
 
 <style>
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--sans-serif);
-  margin: 4rem 0 8rem;
-  text-wrap: balance;
-  text-align: center;
-}
+ #observablehq-center, .observablehq, #observablehq-main {
+   margin: 0px !important;
+ }
 
-.hero h1 {
-  margin: 2rem 0;
-  max-width: none;
-  font-size: 14vw;
-  font-weight: 900;
-  line-height: 1;
-  background: linear-gradient(30deg, var(--theme-foreground-focus), currentColor);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+ p {
+   max-width: 800px;
+ }
 
-.hero h2 {
-  margin: 0;
-  max-width: 34em;
-  font-size: 20px;
-  font-style: initial;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--theme-foreground-muted);
-}
+ ul {
+   padding-top: 0;
+   margin-top: 0;
+ }
 
-@media (min-width: 640px) {
-  .hero h1 {
-    font-size: 90px;
-  }
-}
+ #observablehq-center {
+   display:flex;
+   flex-direction:column;
+   align-items: center;
+   justify-content: center;
+ }
+
+ #observablehq-main {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+ }
+
+ #observablehq-footer {
+   margin: 1rem;
+ }
+
+ #mapContainer canvas {
+   cursor: crosshair;
+ }
+
+
+ #features {
+   position: absolute;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   width: 35%;
+   height: 40%;
+   overflow: auto;
+   background: rgba(255, 255, 255, 0.8);
+   padding: 1rem;
 
 </style>
 
-<div class="hero">
-  <h1>Hello, Observable Framework</h1>
-  <h2>Welcome to your new project! Edit&nbsp;<code style="font-size: 90%;">docs/index.md</code> to change this page.</h2>
-  <a href="https://observablehq.com/framework/getting-started" target="_blank">Get started<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a>
-</div>
+# [Boston Buildings Inventory](https://data.boston.gov/dataset/boston-buildings-inventory)
 
-<div class="grid grid-cols-2" style="grid-auto-rows: 504px;">
-  <div class="card">${
-    resize((width) => Plot.plot({
-      title: "Your awesomeness over time 🚀",
-      subtitle: "Up and to the right!",
-      width,
-      y: {grid: true, label: "Awesomeness"},
-      marks: [
-        Plot.ruleY([0]),
-        Plot.lineY(aapl, {x: "Date", y: "Close", tip: true})
-      ]
-    }))
-  }</div>
-  <div class="card">${
-    resize((width) => Plot.plot({
-      title: "How big are penguins, anyway? 🐧",
-      width,
-      grid: true,
-      x: {label: "Body mass (g)"},
-      y: {label: "Flipper length (mm)"},
-      color: {legend: true},
-      marks: [
-        Plot.linearRegressionY(penguins, {x: "body_mass_g", y: "flipper_length_mm", stroke: "species"}),
-        Plot.dot(penguins, {x: "body_mass_g", y: "flipper_length_mm", stroke: "species", tip: true})
-      ]
-    }))
-  }</div>
+## Retrofit envelope solutions for carbon emission reduction
+
+This visual combines data from the Boston Buildings Inventory with 2022 parcel data for mapping purposes. Color coding is based on the building type (e.g. Single Family Home).
+
+Hover over a property to display its information and potential envelope retrofit solutions (e.g. "insulate attic"). On mobile, you will need to touch a marker with your finger directly, and pinch to zoom in.
+
+```js
+import { hud } from "./components/hud.js";
+```
+
+```js
+import maplibregl from "npm:maplibre-gl@4.0.2";
+import { PMTiles, Protocol } from "npm:pmtiles@3.0.3";
+```
+
+```js
+const bostonMap = FileAttachment("data/boston.pmtiles");
+const mapStyle = FileAttachment("data/maptiler-3d-gl-style.json").json();
+const mapFile = new PMTiles(bostonMap._url);
+const buildingData = FileAttachment("data/buildings_data.csv").zip();
+```
+
+```js
+const protocol = new Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+protocol.add(mapFile);
+```
+
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css">
+
+```js
+// Process Building Data
+const geoBuildingData = {
+  type: "FeatureCollection",
+  name: "geoBuildings",
+  crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  features: [],
+};
+
+const bldData = await buildingData.file("buildings_data.csv").csv();
+
+const buildingTypologies = new Set(
+  bldData.map((feature) => feature.building_typology)
+);
+
+bldData.map((feature) => {
+  const { point: rawPoint, ...rest } = feature;
+  const point = rawPoint.split(",").map((value) => parseFloat(value));
+  geoBuildingData.features.push({
+    type: "Feature",
+    properties: { ...rest },
+    geometry: { type: "Point", coordinates: point },
+  });
+});
+
+const numberOfColors = Array.from(buildingTypologies).length;
+
+// Define the Magma color scale
+const colorScale = d3.scaleSequential(d3.interpolateRainbow);
+
+// Generate a discrete set of colors
+const colors = d3.quantize(colorScale, numberOfColors);
+
+const colorMap = Array.from(buildingTypologies)
+  .map((typology, i) => [typology, colors[i]])
+  .flat();
+
+buildingTypologies.add("All");
+```
+
+<div id="mapContainer">
 </div>
 
 ```js
-const aapl = FileAttachment("aapl.csv").csv({typed: true});
-const penguins = FileAttachment("penguins.csv").csv({typed: true});
+const features = display(document.createElement("div"));
+features.id = "features";
+features.style = "z-index: 100";
+const mapContainer = display(document.getElementById("mapContainer"));
+mapContainer.appendChild(features);
+
+const div = display(document.getElementById("mapContainer"));
+const windowHeight = window.innerHeight;
+const windowWidth = window.innerWidth;
+div.style = `position: relative; height: ${windowHeight - 50}px; width: 100%`;
+const map = new maplibregl.Map({
+  container: div,
+  zoom: 12,
+  maxZoom: 14,
+  minZoom: 10,
+  maxBounds: [
+    [-71.191247, 42.227911],
+    [-70.648072, 42.450118],
+  ],
+  center: [-71.08936258403622, 42.3181973483706],
+  style: {
+    version: 8,
+    sources: {
+      openmaptiles: {
+        type: "vector",
+        tiles: ["pmtiles://" + mapFile.source.getKey() + "/{z}/{x}/{y}"],
+      },
+    },
+    layers: mapStyle.layers,
+    glyphs:
+      "https://m-clare.github.io/map-glyphs/fonts/{fontstack}/{range}.pbf",
+  },
+});
+
+map.addControl(
+  new maplibregl.AttributionControl({
+    compact: true,
+    customAttribution: `<a href="https://protomaps.com">Protomaps</a> | <a href="https://openmaptiles.org">© OpenMapTiles</a> | <a href="http://www.openstreetmap.org/copyright"> © OpenStreetMap contributors</a>`,
+  }),
+  "bottom-left"
+);
+
+map.addControl(new maplibregl.NavigationControl({}), "bottom-right");
+
+map.on("load", () => {
+  map.addSource("bld-data", {
+    type: "geojson",
+    data: geoBuildingData,
+  });
+
+  map.addLayer({
+    id: "bldg",
+    source: "bld-data",
+    type: "circle",
+    paint: {
+      "circle-radius": {
+        stops: [
+          [12, 1], // Radius at zoom level 10
+          [15, 5], // Radius at zoom level 15
+        ],
+        base: 2,
+      },
+      "circle-color": [
+        "match",
+        ["get", "building_typology"],
+        ...colorMap,
+        "#000000",
+      ],
+    },
+  });
+});
+
+map.on("mousemove", (e) => {
+  const locFeatures = map.queryRenderedFeatures(e.point);
+  if (locFeatures[0]?.properties["pid_long"]) {
+    document.getElementById("features").innerHTML = hud(
+      locFeatures[0].properties
+    );
+  } else {
+    document.getElementById("features").innerHTML = null;
+  }
+});
 ```
-
----
-
-## Next steps
-
-Here are some ideas of things you could try…
-
-<div class="grid grid-cols-4">
-  <div class="card">
-    Chart your own data using <a href="https://observablehq.com/framework/lib/plot"><code>Plot</code></a> and <a href="https://observablehq.com/framework/javascript/files"><code>FileAttachment</code></a>. Make it responsive using <a href="https://observablehq.com/framework/javascript/display#responsive-display"><code>resize</code></a>.
-  </div>
-  <div class="card">
-    Create a <a href="https://observablehq.com/framework/routing">new page</a> by adding a Markdown file (<code>whatever.md</code>) to the <code>docs</code> folder.
-  </div>
-  <div class="card">
-    Add a drop-down menu using <a href="https://observablehq.com/framework/javascript/inputs"><code>Inputs.select</code></a> and use it to filter the data shown in a chart.
-  </div>
-  <div class="card">
-    Write a <a href="https://observablehq.com/framework/loaders">data loader</a> that queries a local database or API, generating a data snapshot on build.
-  </div>
-  <div class="card">
-    Import a <a href="https://observablehq.com/framework/javascript/imports">recommended library</a> from npm, such as <a href="https://observablehq.com/framework/lib/leaflet">Leaflet</a>, <a href="https://observablehq.com/framework/lib/dot">GraphViz</a>, <a href="https://observablehq.com/framework/lib/tex">TeX</a>, or <a href="https://observablehq.com/framework/lib/duckdb">DuckDB</a>.
-  </div>
-  <div class="card">
-    Ask for help, or share your work or ideas, on the <a href="https://talk.observablehq.com/">Observable forum</a>.
-  </div>
-  <div class="card">
-    Visit <a href="https://github.com/observablehq/framework">Framework on GitHub</a> and give us a star. Or file an issue if you’ve found a bug!
-  </div>
-</div>

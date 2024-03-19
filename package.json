@@ -9,9 +9,11 @@
     "observable": "observable"
   },
   "dependencies": {
-    "@observablehq/framework": "latest",
+    "@observablehq/framework": "^1.3.0",
     "d3-dsv": "^3.0.1",
-    "d3-time-format": "^4.1.0"
+    "d3-time-format": "^4.1.0",
+    "jszip": "^3.10.1",
+    "polylabel": "^1.1.0"
   },
   "devDependencies": {
     "rimraf": "^5.0.5"
