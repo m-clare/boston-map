@@ -76,15 +76,13 @@ const mapFile = new PMTiles(bostonMap._url);
 const buildingData = FileAttachment("data/buildings_data.csv").zip();
 ```
 
+<link rel="stylesheet" type="text/css" href="npm:maplibre-gl@4.0.2/dist/maplibre-gl.css">
+
 ```js
 const protocol = new Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 protocol.add(mapFile);
-```
 
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css">
-
-```js
 // Process Building Data
 const geoBuildingData = {
   type: "FeatureCollection",
@@ -124,22 +122,13 @@ const colorMap = Array.from(buildingTypologies)
 buildingTypologies.add("All");
 ```
 
-<div id="mapContainer">
+<div id="mapContainer" style="position: relative; height: calc(100vh - 360px); width: 100%;">
+  <div id="features" style="z-index: 100;"></div>
 </div>
 
 ```js
-const features = display(document.createElement("div"));
-features.id = "features";
-features.style = "z-index: 100";
-const mapContainer = display(document.getElementById("mapContainer"));
-mapContainer.appendChild(features);
-
-const div = display(document.getElementById("mapContainer"));
-const windowHeight = window.innerHeight;
-const windowWidth = window.innerWidth;
-div.style = `position: relative; height: ${windowHeight - 50}px; width: 100%`;
 const map = new maplibregl.Map({
-  container: div,
+  container: "mapContainer",
   zoom: 12,
   maxZoom: 14,
   minZoom: 10,
