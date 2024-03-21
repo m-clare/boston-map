@@ -1,5 +1,7 @@
 # Boston Map
 
+See [mclare.blog](https://mclare.blog/posts/building-oss-map-apps-with-observable-framework/) for more information.
+
 This is an [Observable Framework](https://observablehq.com/framework) project. To start the local preview server, run:
 
 ```
@@ -41,13 +43,4 @@ A typical Framework project looks like this:
 
 **`observablehq.config.ts`** - This is the [project configuration](https://observablehq.com/framework/config) file, such as the pages and sections in the sidebar navigation, and the project’s title.
 
-## Command reference
 
-| Command           | Description                                              |
-| ----------------- | -------------------------------------------------------- |
-| `npm install`            | Install or reinstall dependencies                        |
-| `npm run dev`        | Start local preview server                               |
-| `npm run build`      | Build your static site, generating `./dist`              |
-| `npm run deploy`     | Deploy your project to Observable                        |
-| `npm run clean`      | Clear the local data loader cache                        |
-| `npm run observable` | Run commands like `observable help`                      |
