@@ -58,7 +58,7 @@ toc: false
 
 This visual combines data from the Boston Buildings Inventory with 2022 parcel data for mapping purposes. Color coding is based on the building type (e.g. Single Family Home).
 
-Hover over a property to display its information and potential envelope retrofit solutions (e.g. "insulate attic"). On mobile, you will need to touch a marker with your finger directly, and pinch to zoom in.
+Click on a property to display its information and potential envelope retrofit solutions (e.g. "insulate attic"). On mobile, you will need to touch a marker with your finger directly, and pinch to zoom in.
 
 ```js
 import { hud } from "./components/hud.js";
@@ -76,7 +76,7 @@ const mapFile = new PMTiles(bostonMap._url);
 const buildingData = FileAttachment("data/buildings_data.csv").zip();
 ```
 
-<link rel="stylesheet" type="text/css" href="npm:maplibre-gl@4.0.2/dist/maplibre-gl.css">
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css">
 
 ```js
 const protocol = new Protocol();
@@ -122,7 +122,7 @@ const colorMap = Array.from(buildingTypologies)
 buildingTypologies.add("All");
 ```
 
-<div id="mapContainer" style="position: relative; height: calc(100vh - 360px); width: 100%;">
+<div id="mapContainer" style="position: relative; height: calc(100vh - 280px); width: 100%;">
   <div id="features" style="z-index: 100;"></div>
 </div>
 
@@ -189,7 +189,7 @@ map.on("load", () => {
   });
 });
 
-map.on("mousemove", (e) => {
+map.on("click", (e) => {
   const locFeatures = map.queryRenderedFeatures(e.point);
   if (locFeatures[0]?.properties["pid_long"]) {
     document.getElementById("features").innerHTML = hud(
