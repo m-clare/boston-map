@@ -78,7 +78,7 @@ const mapFile = new PMTiles(bostonMap._url);
 const buildingData = FileAttachment("data/buildings_data.csv").zip();
 ```
 
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css">
+<link rel="stylesheet" type="text/css" href="npm:maplibre-gl@4.0.2/dist/maplibre-gl.css">
 
 ```js
 const protocol = new Protocol();
