@@ -60,6 +60,8 @@ This visual combines data from the Boston Buildings Inventory with 2022 parcel d
 
 Click on a property to display its information and potential envelope retrofit solutions (e.g. "insulate attic"). On mobile, you will need to touch a marker with your finger directly, and pinch to zoom in.
 
+More info about how this map was built at: [mclare.blog](https://mclare.blog/posts/building-oss-map-apps-with-observable-framework/)
+
 ```js
 import { hud } from "./components/hud.js";
 ```
@@ -122,7 +124,7 @@ const colorMap = Array.from(buildingTypologies)
 buildingTypologies.add("All");
 ```
 
-<div id="mapContainer" style="position: relative; height: calc(100vh - 280px); width: 100%;">
+<div id="mapContainer" style="position: relative; height: calc(100vh - 300px); width: 100%;">
   <div id="features" style="z-index: 100;"></div>
 </div>
 
