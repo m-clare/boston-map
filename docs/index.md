@@ -74,7 +74,7 @@ import { PMTiles, Protocol } from "npm:pmtiles@3.0.3";
 ```js
 const bostonMap = FileAttachment("data/boston.pmtiles");
 const mapStyle = FileAttachment("data/maptiler-3d-gl-style.json").json();
-const mapFile = new PMTiles(bostonMap._url);
+const mapFile = new PMTiles(bostonMap.href);
 const buildingData = FileAttachment("data/buildings_data.csv").zip();
 ```
 
